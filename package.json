@@ -1,15 +1,15 @@
 {
-  "name": "hsuc",
+  "name": "next-hsuc",
   "version": "0.0.1",
   "description": "react服务端渲染，打包文件上传到云端，提高加载速度",
   "main": "index.js",
   "scripts": {},
   "author": "kszitt",
   "license": "ISC",
-  "homepage": "https://github.com/kszitt/hsuc",
+  "homepage": "https://github.com/kszitt/next-hsuc",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kszitt/hsuc.git"
+    "url": "git+https://github.com/kszitt/next-hsuc.git"
   },
   "keywords": [
     "webpack",
