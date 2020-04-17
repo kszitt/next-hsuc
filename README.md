@@ -4,7 +4,7 @@
 
 ## 安装
 ```bash
-npm install hsuc --save-dev
+npm install next-hsuc --save-dev
 ```
 
 ## 要求
@@ -12,17 +12,25 @@ npm install hsuc --save-dev
 Node.js >= 10.10.0 required
 
 ## 使用
-#### webpack配置文件
+#### package.json 添加命令
+```bash
+// cross-env 需要先安装，npm install cross-env --save-dev
+
+    "dev": "cross-env PORT=80 PROXY=true node server.js",
+    "build": "cross-env NODE_ENV=production next build",
+    "start": "cross-env NODE_ENV=production PORT=80 PROXY=true node server.js"
+```
+
+#### next.config.js 配置文件
 ```bash
 // webpack.config.js
+const withPlugins = require ("next-compose-plugins");
+const {PHASE_DEVELOPMENT_SERVER} = require('next-server/constants');
 const Hsuc = require('hsuc');
-
-...
-plugins: [
-  ...
-  new Hsuc({
+const HsucOptions = {
     cloudFolder: "<云端文件夹>",
     domain: "<域名>",
+    enable: true,
     // 阿里云（任选其一）
     aliyun: {
       region: "<OSS region>",
@@ -49,8 +57,26 @@ plugins: [
       operatorName: "<operator name>",
       operatorPassword: "<operator password>",
     }
-  })
-]
+}
+
+const nextConfig = {
+  webpack: (config, options) => {
+    config.plugins.push(
+      new Hsuc(Object.assign(HsucOptions, options))
+    )
+
+    return config;
+  },
+  distDir: "_next",
+  ["!" + (HsucOptions.enable ? PHASE_DEVELOPMENT_SERVER : "")]: {
+    assetPrefix: `${HsucOptions.domain}/${HsucOptions.cloudFolder}`,
+  }
+};
+
+module.exports = withPlugins(
+    [...], 
+    nextConfig);
+)
 ```
 
 ## hsuc(options)支持的选项
@@ -58,7 +84,7 @@ plugins: [
 - `huawei` - 初始化华为云OBS参数。
 - `qiniu` - 初始化七牛云参数。
 - `upyun` - 初始化又拍云参数。
-- `disable[boolean]` - 是否禁用，默认`false`。
+- `enable[boolean]` - 是否启用，默认`true`。
 - `removePrevVersion[boolean]` - 是否删除云端以前的版本，默认`false`
 - `log[boolean]` - 是否显示日志，默认`false`
 - `cover[boolean|RegExp]` - 图片、字体文件是否覆盖，默认`false`，填写正则时可以参考`/\.(png|jpe?g|gif|ico|woff2?|svg|ttf|eot)$/`。
@@ -74,12 +100,12 @@ plugins: [
 ## 注意事项
 - <label style="color:red">云端访问权限请设置为“公共读写”或者“公共读”</label>
 - `options`参数中`aliyun`、`huawei`、`qiniu`和`upyun`同时配置只有第一个有效
-- `options.disable` 该插件在非打包模式时禁用
-- `options.deletePrevBuildFile` 启用该项会把以前的版本删掉，建议在服务器定期清理。
+- 该插件在开发模式时禁用
+- `options.deletePrevBuildFile` 启用该项会把以前的版本删掉，请谨慎。
 
 #### 部署
 ``` hash
-webpack
-// 将打包文件夹下的index.html文件部署到服务器，即可访问
+npm run build
+mpm run start
 ```
 

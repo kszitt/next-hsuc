@@ -7,34 +7,53 @@ class Hsuc {
     let defaultOptions = {
       log: false,
       cover: false,
-      disable: false,
+      enable: false,
       removePrevVersion: false,
     };
     this.options = Object.assign(defaultOptions, options);
   }
 
   apply(compiler){
-    if(this.options.disable) return;
+    if(!this.options.enable) return;
     if(!this.options.cloudFolder || !this.options.domain){
       console.warn("初始化时请传入“cloudFolder”和“domain”字段。本次打包将不上传");
       return;
     }
-    if(/webpack-dev-server/.test(process.env.npm_lifecycle_script)){
+    if(this.options.buildId === "development"){
       this.message("只有打包模式才会上传");
       return;
     }
-
     
     // 初始化
     this.options.cloudFolder = this.options.cloudFolder.replace(/([^/])$/, "$1/");
     this.options.domain = this.options.domain.replace(/([^/])$/, "$1/");
     this.options.path = compiler.options.output.path;
 
-    compiler.options.output.publicPath = `${this.options.domain}${this.options.cloudFolder}`;
-
     // 打包完成后
     compiler.plugin('afterEmit', async compilation => {
-      this.options.assets = compilation.assets;
+      let {isServer} = this.options;
+      global.uploadFiles = global.uploadFiles || new Set();
+
+      // 本次打包的文件放到global.uploadFiles中
+      for(let k in compilation.assets){
+        let name = k.replace(/\\/g, "/");
+        if(/^\.\.\/(static\/)/.test(name)){
+          name = name.replace(/^\.\.\/(static\/)/, "$1");
+        } else if(isServer){
+          name = "server/" + name;
+        }
+        global.uploadFiles.add(name);
+      }
+
+      // 添加版本文件
+      global.uploadFiles.add(`${isServer ? "server/" : ""}records.json`);
+      if(!isServer){
+        global.uploadFiles.add("BUILD_ID");
+      } else {
+        return;
+      }
+
+      this.options.assets = Array.from(global.uploadFiles);
       this.uploaded = 0;
 
       this.cloud = new Cloud(this.options);
@@ -44,7 +63,7 @@ class Hsuc {
       }
 
       await this.upload(this.options.path);
-      console.log("本地文件上传成功");
+      if(this.uploaded > 0) console.log("本地文件上传成功");
 
       if(!this.options.removePrevVersion) return;
       await this.remove();
@@ -79,8 +98,8 @@ class Hsuc {
         if(/node_modules/.test(filePath)) continue;
 
         switch(true){
-          case file.isFile() && !!assets[folder + file.name]:
-            CDNPath = filePath.replace(this.options.path, this.options.cloudFolder.replace(/\/$/, ""));
+          case file.isFile() && assets.indexOf(folder + file.name) !== -1:
+            CDNPath = this.options.cloudFolder + filePath.replace(this.options.dir, "").replace(/^[\\\/]/, "");
             result = await this.cloud.uploadFile(filePath, CDNPath, this.options.cover);
               ++this.uploaded;
             if(result){
@@ -110,13 +129,13 @@ class Hsuc {
   // 删除云端文件
   async remove(){
     try {
-      let path = this.options.cloudFolder,
+      let path = this.options.cloudFolder + this.options.config.distDir + "/",
         assets = this.options.assets,
         cloudFiles = await this.cloud.getFilesByFolder(path);
 
-      for(let k in assets){
+      for(let i = 0; i < assets.length; i++){
         cloudFiles = cloudFiles.filter(item =>
-          item.name.replace(this.options.cloudFolder, "") !== k
+          item.name.replace(this.options.cloudFolder+this.options.config.distDir+"/", "") !== assets[i]
         )
       }
 
