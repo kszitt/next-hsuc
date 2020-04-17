@@ -16,9 +16,9 @@ Node.js >= 10.10.0 required
 ```bash
 // cross-env 需要先安装，npm install cross-env --save-dev
 
-    "dev": "cross-env PORT=80 PROXY=true node server.js",
-    "build": "cross-env NODE_ENV=production next build",
-    "start": "cross-env NODE_ENV=production PORT=80 PROXY=true node server.js"
+"dev": "cross-env PORT=80 PROXY=true node server.js",
+"build": "cross-env NODE_ENV=production next build",
+"start": "cross-env NODE_ENV=production PORT=80 PROXY=true node server.js"
 ```
 
 #### next.config.js 配置文件
