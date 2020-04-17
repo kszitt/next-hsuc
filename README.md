@@ -127,7 +127,7 @@ module.exports = withPlugins(
 - 该插件在开发模式时禁用
 - `options.deletePrevBuildFile` 启用该项会把以前的版本删掉，请谨慎。
 
-#### 部署
+## 部署
 ``` hash
 npm run build
 mpm run start
