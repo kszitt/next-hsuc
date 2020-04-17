@@ -21,6 +21,30 @@ Node.js >= 10.10.0 required
 "start": "cross-env NODE_ENV=production PORT=80 PROXY=true node server.js"
 ```
 
+#### server.js 可以用自己的，这个只是举例
+```bash
+const express = require('express');
+const next = require('next');
+const { NODE_ENV, PORT=3000, PROXY } = process.env;
+const app = next({dir: '.', dev: NODE_ENV !== "production"});
+
+app.prepare()
+  .then(() => {
+    const server = express();
+
+    server.listen(PORT, (err) => {
+      if (err) {
+        throw err
+      }
+      console.log(`> Ready on port ${PORT} [${NODE_ENV}]`);
+    })
+  })
+  .catch((ex) => {
+    console.log('An error occurred, unable to start the server')
+    console.log(ex)
+  });
+```
+
 #### next.config.js 配置文件
 ```bash
 // webpack.config.js
