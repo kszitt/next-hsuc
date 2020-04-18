@@ -1,6 +1,6 @@
 {
   "name": "next-hsuc",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "react服务端渲染，打包文件上传到云端，提高加载速度",
   "main": "index.js",
   "scripts": {},

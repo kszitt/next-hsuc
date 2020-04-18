@@ -5,7 +5,7 @@ const Base = require("./base");
 class Hsuc {
   constructor(options){
     let defaultOptions = {
-      log: false,
+      log: true,
       cover: false,
       enable: false,
       removePrevVersion: false,
