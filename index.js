@@ -55,6 +55,7 @@ class Hsuc {
 
       this.options.assets = Array.from(global.uploadFiles);
       this.uploaded = 0;
+      this.deleted = 0;
 
       this.cloud = new Cloud(this.options);
       if(!this.cloud.CDN){
@@ -67,7 +68,7 @@ class Hsuc {
 
       if(!this.options.removePrevVersion) return;
       await this.remove();
-      console.log("云端上个版本文件清除成功");
+      console.log(this.deleted ? "云端上个版本文件清除成功" : "云端没有要删除的文件");
     });
   }
 
@@ -147,7 +148,8 @@ class Hsuc {
 
         result = await this.cloud.deleteFile(name);
         if(result){
-          this.message(`云端文件删除[${i+1}/${cloudFiles.length}]：`, this.options.domain + name);
+          this.deleted++;
+          this.message(`云端文件删除[${this.deleted}/${cloudFiles.length}]：`, this.options.domain + name);
         }
       }
     } catch(err){

@@ -27,6 +27,10 @@ class Cloud {
             const Upyun = require("../cloud/upyun");
             this.CDN = new Upyun(options[key]);
             break;
+          case "tencent":
+            const Tencent = require("../cloud/tencent");
+            this.CDN = new Tencent(options[key]);
+            break;
         }
         if(this.CDN) break;
       }

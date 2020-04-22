@@ -1,6 +1,6 @@
 ## 描述
 将webpack打包生成的文件上传到云端，以提高加载速度   
-目前，支持阿里云、华为云、七牛云和又拍云，以及自定义扩展。 
+目前，支持阿里云、华为云、腾讯云、七牛云和又拍云，以及自定义扩展。 
 
 ## 安装
 ```bash
@@ -69,6 +69,13 @@ const HsucOptions = {
       server: "<https://your-endpoint>",
       bucket: "<Bucket>"
     },
+    // 腾讯云（任选其一）
+    tencent: {
+      secretId: "<SecretId>",
+      secretKey: "<SecretKey>",
+      bucket: "<Bucket>",
+      region: "<Region>"
+    },
     // 七牛云（任选其一）
     qiniu: {
       accessKey: "<ACCESS_KEY>",
@@ -106,6 +113,7 @@ module.exports = withPlugins(
 ## hsuc(options)支持的选项
 - `aliyun` - 初始化阿里云OSS参数。
 - `huawei` - 初始化华为云OBS参数。
+- `tencent` - 初始化腾讯云COS参数。
 - `qiniu` - 初始化七牛云参数。
 - `upyun` - 初始化又拍云参数。
 - `enable[boolean]` - 是否启用，默认`true`。
@@ -118,12 +126,13 @@ module.exports = withPlugins(
 ## 对象存储CORS规则设置
 - `aliyun` 按照[设置CORS](https://help.aliyun.com/document_detail/44570.html?spm=5176.8465980.0.0.12871450vh6n2z)设置CORS
 - `huawei` 按照[配置桶的CORS](https://support.huaweicloud.com/sdk-browserjs-devg-obs/obs_24_0201.html)中“通过OBS Browser配置桶的CORS”设置
+- `tencent` 按照[设置跨域访问](https://cloud.tencent.com/document/product/436/13318)设置
 - `qiniu` 按照[CORS 跨域共享](https://console.upyun.com/services/kszitt/antileechFile/)设置
 - `upyun` 按照[CORS 跨域配置](http://docs.upyun.com/cdn/feature/#cors)设置
 
 ## 注意事项
 - <label style="color:red">云端访问权限请设置为“公共读写”或者“公共读”</label>
-- `options`参数中`aliyun`、`huawei`、`qiniu`和`upyun`同时配置只有第一个有效
+- `options`参数中`aliyun`、`huawei`、`tencent`、`qiniu`和`upyun`同时配置只有第一个有效
 - 该插件在开发模式时禁用
 - `options.deletePrevBuildFile` 启用该项会把以前的版本删掉，请谨慎。
 

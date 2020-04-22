@@ -1,6 +1,6 @@
 {
   "name": "next-hsuc",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "react服务端渲染，打包文件上传到云端，提高加载速度",
   "main": "index.js",
   "scripts": {},
@@ -19,14 +19,17 @@
     "cdn",
     "oss",
     "obs",
+    "cos",
     "aliyun",
     "huawei",
+    "tencent",
     "qiniu",
     "upyun"
   ],
   "dependencies": {
     "ali-oss": "^6.1.0",
     "bluebird": "^3.5.3",
+    "cos-nodejs-sdk-v5": "^2.5.20",
     "esdk-obs-nodejs": "^3.1.3",
     "node-cmd": "^3.0.0",
     "qiniu": "^7.3.0",
